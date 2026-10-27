@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/TTstack/tt/internal/runcmd"
+	"github.com/aisidev/tt/internal/runcmd"
 )
 
 func (n *Network) BridgeExists(ctx context.Context) (bool, error) {

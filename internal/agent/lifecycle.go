@@ -9,11 +9,11 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/TTstack/tt/internal/api"
-	"github.com/TTstack/tt/internal/capability"
-	"github.com/TTstack/tt/internal/engine"
-	"github.com/TTstack/tt/internal/model"
-	"github.com/TTstack/tt/internal/sshboot"
+	"github.com/aisidev/tt/api"
+	"github.com/aisidev/tt/internal/capability"
+	"github.com/aisidev/tt/internal/engine"
+	"github.com/aisidev/tt/internal/sshboot"
+	"github.com/aisidev/tt/model"
 	"golang.org/x/sys/unix"
 )
 

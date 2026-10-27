@@ -8,8 +8,8 @@ import (
 	"path/filepath"
 	"reflect"
 
-	"github.com/TTstack/tt/internal/model"
-	"github.com/TTstack/tt/internal/runcmd"
+	"github.com/aisidev/tt/internal/runcmd"
+	"github.com/aisidev/tt/model"
 )
 
 type metadataPair struct{ key, value string }

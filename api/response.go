@@ -1,7 +1,7 @@
 // Package api defines the shared HTTP request and response documents.
 package api
 
-import "github.com/TTstack/tt/internal/model"
+import "github.com/aisidev/tt/model"
 
 type Resp[T any] struct {
 	OK      bool           `json:"ok"`

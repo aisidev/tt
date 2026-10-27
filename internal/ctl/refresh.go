@@ -7,8 +7,8 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/TTstack/tt/internal/backup"
-	"github.com/TTstack/tt/internal/model"
+	"github.com/aisidev/tt/internal/backup"
+	"github.com/aisidev/tt/model"
 )
 
 func (s *Server) RefreshAllHosts(ctx context.Context, client *agentClient) {

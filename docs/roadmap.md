@@ -67,7 +67,7 @@ has not been run; the skeleton intentionally refuses functional operations.
 
 Deliverables
 
-- `go.mod` (module `github.com/TTstack/tt`, Go 1.26 minimum) with the four direct
+- `go.mod` (module `github.com/aisidev/tt`, Go 1.26 minimum) with the four direct
   dependencies and their required indirect modules/checksums. Pin versions that
   build with the minimum toolchain; verify it separately from the local toolchain.
 - `Makefile`: `build`, `release`, `test`, `lint`, `fmt`, `clean`, `install`,
@@ -91,7 +91,7 @@ Status: complete. [Validation evidence](validation/shared-core-2026-09-30.md)
 records 1,642 Rust cases, minimum-toolchain gates and native FreeBSD race/integration
 checks. Linux engine and database acceptance remains in its owning later phases.
 
-Deliverables (`internal/model`, `api`, `capability`, `backup`, `guestconfig`,
+Deliverables (`model`, `api`, `capability`, `backup`, `guestconfig`,
 `sshboot`, `auth`, `runcmd`)
 
 - Entities, enums (strict JSON), constants, resource accounting, validation.

@@ -7,10 +7,10 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/TTstack/tt/internal/api"
-	"github.com/TTstack/tt/internal/capability"
-	"github.com/TTstack/tt/internal/guestconfig"
-	"github.com/TTstack/tt/internal/model"
+	"github.com/aisidev/tt/api"
+	"github.com/aisidev/tt/internal/capability"
+	"github.com/aisidev/tt/internal/guestconfig"
+	"github.com/aisidev/tt/model"
 	"github.com/google/uuid"
 )
 

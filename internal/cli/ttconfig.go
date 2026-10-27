@@ -7,7 +7,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/TTstack/tt/internal/auth"
+	"github.com/aisidev/tt/internal/auth"
 )
 
 type cliConfig struct {

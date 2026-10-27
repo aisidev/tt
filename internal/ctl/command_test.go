@@ -3,8 +3,8 @@ package ctl
 import (
 	"context"
 	"encoding/json"
-	"github.com/TTstack/tt/internal/api"
-	"github.com/TTstack/tt/internal/model"
+	"github.com/aisidev/tt/api"
+	"github.com/aisidev/tt/model"
 	"net/http"
 	"net/http/httptest"
 	"path/filepath"

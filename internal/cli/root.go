@@ -8,7 +8,7 @@ import (
 	"io"
 	"strings"
 
-	"github.com/TTstack/tt/internal/commandline"
+	"github.com/aisidev/tt/internal/commandline"
 )
 
 //go:embed help/*.txt

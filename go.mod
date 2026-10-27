@@ -1,4 +1,4 @@
-module github.com/TTstack/tt
+module github.com/aisidev/tt
 
 go 1.26.0
 

@@ -10,8 +10,8 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"github.com/TTstack/tt/internal/model"
-	"github.com/TTstack/tt/internal/runcmd"
+	"github.com/aisidev/tt/internal/runcmd"
+	"github.com/aisidev/tt/model"
 )
 
 // Network's defaults use fixed Rust-compatible paths. Internal seams let tests

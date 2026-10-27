@@ -6,8 +6,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/TTstack/tt/internal/engine"
-	"github.com/TTstack/tt/internal/model"
+	"github.com/aisidev/tt/internal/engine"
+	"github.com/aisidev/tt/model"
 )
 
 func TestNetworkBindingPreventsLosingOwnedIngressDuringReconfiguration(t *testing.T) {

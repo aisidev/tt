@@ -36,12 +36,12 @@ to break an underlying import cycle. Codecs and pure defaults belong with types.
 
 | Rust file | Go package/files | Notes |
 |---|---|---|
-| `core/src/model.rs` | `internal/model` | entities, enums, constants, `Resource`, validation |
-| `core/src/api.rs` | `internal/api` | DTOs, `ApiResp[T]` → generic `Resp[T]` |
-| `core/src/capability.rs` | `internal/model` + `internal/capability` | wire types in model; matrix, scoped admission and legacy tags in capability |
-| `core/src/backup.rs` | `internal/model` + `internal/api` + `internal/backup` | embedded state in model; view/body in api; `Check`, `ErrorStatus` in backup |
+| `core/src/model.rs` | `model` | entities, enums, constants, `Resource`, validation |
+| `core/src/api.rs` | `api` | DTOs, `ApiResp[T]` → generic `Resp[T]` |
+| `core/src/capability.rs` | `model` + `internal/capability` | wire types in model; matrix, scoped admission and legacy tags in capability |
+| `core/src/backup.rs` | `model` + `api` + `internal/backup` | embedded state in model; view/body in api; `Check`, `ErrorStatus` in backup |
 | `core/src/guest_config.rs` | `internal/guestconfig` | validation, digest, ext4 disk |
-| `core/src/ssh.rs` | `internal/model` + `internal/sshboot` | options/info in model; option resolution, seed script and probes in sshboot |
+| `core/src/ssh.rs` | `model` + `internal/sshboot` | options/info in model; option resolution, seed script and probes in sshboot |
 | `core/src/auth.rs` | `internal/auth` | key parsing, constant-time compare |
 | `core/src/command.rs` | `internal/runcmd` | bounded execution |
 | `core/src/lib.rs` `lock_state` | `internal/runcmd` (or `internal/fslock`) | `flock` on the state directory |

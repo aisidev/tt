@@ -1,7 +1,7 @@
 // Wire structures transcribed from the pinned Rust api.rs.
 package api
 
-import "github.com/TTstack/tt/internal/model"
+import "github.com/aisidev/tt/model"
 
 type CreateVmReq struct {
 	VmID            string             `json:"vm_id"`

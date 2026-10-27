@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/TTstack/tt/internal/agent"
+	"github.com/aisidev/tt/internal/agent"
 	"os"
 )
 

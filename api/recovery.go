@@ -1,6 +1,6 @@
 package api
 
-import "github.com/TTstack/tt/internal/model"
+import "github.com/aisidev/tt/model"
 
 type CheckpointRequest struct {
 	ID string `json:"id"`

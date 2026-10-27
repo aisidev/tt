@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/TTstack/tt/internal/api"
-	"github.com/TTstack/tt/internal/model"
+	"github.com/aisidev/tt/api"
+	"github.com/aisidev/tt/model"
 )
 
 func validAgentAddress(address string) bool {

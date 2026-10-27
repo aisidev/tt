@@ -13,7 +13,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/TTstack/tt/internal/model"
+	"github.com/aisidev/tt/model"
 )
 
 type Route struct {

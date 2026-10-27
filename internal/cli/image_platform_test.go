@@ -3,7 +3,7 @@ package cli
 import (
 	"context"
 	"fmt"
-	"github.com/TTstack/tt/internal/runcmd"
+	"github.com/aisidev/tt/internal/runcmd"
 	"os"
 	"os/exec"
 	"path/filepath"

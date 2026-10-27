@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"math"
 
-	"github.com/TTstack/tt/internal/model"
+	"github.com/aisidev/tt/model"
 )
 
 func capacityMiB(bytes uint64) uint32 {

@@ -17,7 +17,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/TTstack/tt/internal/api"
+	"github.com/aisidev/tt/api"
 )
 
 type Journal struct {

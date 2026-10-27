@@ -11,7 +11,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/TTstack/tt/internal/model"
+	"github.com/aisidev/tt/model"
 )
 
 func TestPortableArchiveDigestAndMemberEnvelope(t *testing.T) {

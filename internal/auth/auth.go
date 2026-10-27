@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/TTstack/tt/internal/api"
+	"github.com/aisidev/tt/api"
 )
 
 func ParseAPIKey(key string) (string, error) {

@@ -11,8 +11,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/TTstack/tt/internal/engine"
-	"github.com/TTstack/tt/internal/model"
+	"github.com/aisidev/tt/internal/engine"
+	"github.com/aisidev/tt/model"
 )
 
 func testDatabase(t *testing.T) *database {

@@ -26,8 +26,8 @@ extractor failures are plain text, as in Axum. See the
 | GET / PUT / DELETE | `/api/vms/{id}/backup` | Inspect / create or refresh / delete disk backup |
 | POST | `/api/vms/{id}/backup/restore` | Restore the requested generation |
 
-Request/response structures live in [internal/api](../internal/api) and
-[internal/model](../internal/model). Unknown routes return 404. Unsupported methods
+Request/response structures live in [api](../api) and
+[model](../model). Unknown routes return 404. Unsupported methods
 on known routes return 405 with `Allow`; GET routes also support HEAD. Paths are
 not redirected or normalized for extra slashes and dot segments. Captured path
 parameters are percent-decoded and must be UTF-8.

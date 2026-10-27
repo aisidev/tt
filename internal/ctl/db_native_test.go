@@ -7,8 +7,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/TTstack/tt/internal/model"
-	"github.com/TTstack/tt/internal/runcmd"
+	"github.com/aisidev/tt/internal/runcmd"
+	"github.com/aisidev/tt/model"
 )
 
 func TestNativeRustGoControllerDatabaseUpgradeBoundary(t *testing.T) {

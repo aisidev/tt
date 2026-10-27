@@ -5,8 +5,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/TTstack/tt/internal/engine"
-	"github.com/TTstack/tt/internal/model"
+	"github.com/aisidev/tt/internal/engine"
+	"github.com/aisidev/tt/model"
 )
 
 // observedSnapshot projects fresh process evidence without writing lifecycle,

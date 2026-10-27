@@ -2,8 +2,8 @@ package ctl
 
 import (
 	"context"
-	"github.com/TTstack/tt/internal/api"
-	"github.com/TTstack/tt/internal/model"
+	"github.com/aisidev/tt/api"
+	"github.com/aisidev/tt/model"
 )
 
 func (d *DB) PutVolume(ctx context.Context, v *model.Volume) error {

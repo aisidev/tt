@@ -5,8 +5,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/TTstack/tt/internal/command"
-	"github.com/TTstack/tt/internal/model"
+	"github.com/aisidev/tt/internal/command"
+	"github.com/aisidev/tt/model"
 )
 
 // fenceHTTP advances receiver ownership without changing guest data, including

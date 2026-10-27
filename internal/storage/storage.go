@@ -10,8 +10,8 @@ import (
 	"path/filepath"
 	"runtime"
 
-	"github.com/TTstack/tt/internal/model"
-	"github.com/TTstack/tt/internal/runcmd"
+	"github.com/aisidev/tt/internal/runcmd"
+	"github.com/aisidev/tt/model"
 )
 
 type ImageStore interface {

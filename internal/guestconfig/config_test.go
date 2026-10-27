@@ -1,7 +1,7 @@
 package guestconfig
 
 import (
-	"github.com/TTstack/tt/internal/model"
+	"github.com/aisidev/tt/model"
 	"strings"
 	"testing"
 )

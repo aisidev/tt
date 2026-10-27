@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/TTstack/tt/internal/model"
+	"github.com/aisidev/tt/model"
 	"github.com/google/uuid"
 )
 

@@ -3,14 +3,14 @@ package ctl
 import (
 	"context"
 	"fmt"
-	"github.com/TTstack/tt/internal/capability"
+	"github.com/aisidev/tt/internal/capability"
 	"slices"
 	"sort"
 	"time"
 
-	"github.com/TTstack/tt/internal/api"
-	"github.com/TTstack/tt/internal/command"
-	"github.com/TTstack/tt/internal/model"
+	"github.com/aisidev/tt/api"
+	"github.com/aisidev/tt/internal/command"
+	"github.com/aisidev/tt/model"
 )
 
 func diskAPIError(class, code, message string) *APIError {

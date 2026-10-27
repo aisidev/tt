@@ -5,7 +5,7 @@ package guestconfig
 import (
 	"context"
 	"fmt"
-	"github.com/TTstack/tt/internal/model"
+	"github.com/aisidev/tt/model"
 )
 
 func WriteDisk(ctx context.Context, directory string, files model.GuestConfig) error {

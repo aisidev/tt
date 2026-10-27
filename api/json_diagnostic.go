@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/TTstack/tt/internal/model"
+	"github.com/aisidev/tt/model"
 	"io"
 	"reflect"
 	"regexp"

@@ -14,9 +14,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/TTstack/tt/internal/api"
-	"github.com/TTstack/tt/internal/command"
-	"github.com/TTstack/tt/internal/model"
+	"github.com/aisidev/tt/api"
+	"github.com/aisidev/tt/internal/command"
+	"github.com/aisidev/tt/model"
 	"github.com/google/uuid"
 )
 

@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/TTstack/tt/internal/model"
+	"github.com/aisidev/tt/model"
 )
 
 type sshTarget struct {

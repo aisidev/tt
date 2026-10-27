@@ -9,12 +9,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/TTstack/tt/internal/api"
-	"github.com/TTstack/tt/internal/capability"
-	"github.com/TTstack/tt/internal/command"
-	"github.com/TTstack/tt/internal/guestconfig"
-	"github.com/TTstack/tt/internal/model"
-	"github.com/TTstack/tt/internal/sshboot"
+	"github.com/aisidev/tt/api"
+	"github.com/aisidev/tt/internal/capability"
+	"github.com/aisidev/tt/internal/command"
+	"github.com/aisidev/tt/internal/guestconfig"
+	"github.com/aisidev/tt/internal/sshboot"
+	"github.com/aisidev/tt/model"
 	"github.com/google/uuid"
 )
 

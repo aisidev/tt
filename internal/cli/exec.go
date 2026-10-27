@@ -5,7 +5,7 @@ import (
 	"os/exec"
 	"time"
 
-	"github.com/TTstack/tt/internal/runcmd"
+	"github.com/aisidev/tt/internal/runcmd"
 )
 
 // A zero CLI timeout explicitly denotes a Rust call site without a time limit.

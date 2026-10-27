@@ -16,10 +16,10 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"github.com/TTstack/tt/internal/backup"
-	"github.com/TTstack/tt/internal/guestconfig"
-	"github.com/TTstack/tt/internal/model"
-	"github.com/TTstack/tt/internal/runcmd"
+	"github.com/aisidev/tt/internal/backup"
+	"github.com/aisidev/tt/internal/guestconfig"
+	"github.com/aisidev/tt/internal/runcmd"
+	"github.com/aisidev/tt/model"
 )
 
 type BackupContext struct {

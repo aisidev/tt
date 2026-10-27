@@ -3,7 +3,7 @@ package ctl
 import (
 	"context"
 	"encoding/json"
-	"github.com/TTstack/tt/internal/command"
+	"github.com/aisidev/tt/internal/command"
 	"net/http"
 	"strings"
 )

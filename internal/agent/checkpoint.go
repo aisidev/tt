@@ -7,9 +7,9 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/TTstack/tt/internal/api"
-	"github.com/TTstack/tt/internal/command"
-	"github.com/TTstack/tt/internal/model"
+	"github.com/aisidev/tt/api"
+	"github.com/aisidev/tt/internal/command"
+	"github.com/aisidev/tt/model"
 )
 
 const checkpointSchema = `CREATE TABLE checkpoint_freezes(vm TEXT PRIMARY KEY,point TEXT NOT NULL,data TEXT NOT NULL);`

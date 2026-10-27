@@ -5,7 +5,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"github.com/TTstack/tt/internal/commandline"
+	"github.com/aisidev/tt/internal/commandline"
 	"io"
 )
 

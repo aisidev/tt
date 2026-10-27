@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/TTstack/tt/internal/cli"
+	"github.com/aisidev/tt/internal/cli"
 	"os"
 )
 

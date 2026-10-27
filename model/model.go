@@ -11,10 +11,11 @@ import (
 )
 
 const (
-	VMCPUDefault    uint32 = 2
-	VMMemDefault    uint32 = 1024
-	VMDiskDefault   uint32 = 40 * 1024
-	DefaultLifetime uint64 = 6 * 3600
+	VMCPUDefault  uint32 = 2
+	VMMemDefault  uint32 = 1024
+	VMDiskDefault uint32 = 40 * 1024
+	// DefaultLifetime is permanent unless a caller explicitly sets an expiry.
+	DefaultLifetime uint64 = 0
 	MaxHosts               = 50
 	MaxVMs                 = 1000
 	RunDir                 = "/home/ttstack/run"

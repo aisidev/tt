@@ -11,7 +11,7 @@ import (
 	"time"
 	"unicode"
 
-	"github.com/TTstack/tt/internal/runcmd"
+	"github.com/aisidev/tt/internal/runcmd"
 	"golang.org/x/sys/unix"
 )
 

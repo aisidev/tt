@@ -2,7 +2,7 @@ package guestconfig
 
 import (
 	"context"
-	"github.com/TTstack/tt/internal/model"
+	"github.com/aisidev/tt/model"
 	"os"
 	"os/exec"
 	"path/filepath"

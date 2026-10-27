@@ -15,8 +15,8 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/TTstack/tt/internal/model"
-	"github.com/TTstack/tt/internal/netcfg"
+	"github.com/aisidev/tt/internal/netcfg"
+	"github.com/aisidev/tt/model"
 )
 
 func readObservationFile(path string, limit int64) ([]byte, bool, error) {

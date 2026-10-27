@@ -6,7 +6,7 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/TTstack/tt/internal/model"
+	"github.com/aisidev/tt/model"
 )
 
 const Version uint32 = 1

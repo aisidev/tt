@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/TTstack/tt/internal/model"
+	"github.com/aisidev/tt/model"
 )
 
 func TestLinuxEngineRustGoldenCommandsAndConfiguration(t *testing.T) {

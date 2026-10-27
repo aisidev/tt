@@ -8,8 +8,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/TTstack/tt/internal/model"
-	"github.com/TTstack/tt/internal/storage"
+	"github.com/aisidev/tt/internal/storage"
+	"github.com/aisidev/tt/model"
 	"github.com/google/uuid"
 )
 

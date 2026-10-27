@@ -11,8 +11,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/TTstack/tt/internal/model"
-	"github.com/TTstack/tt/internal/runcmd"
+	"github.com/aisidev/tt/internal/runcmd"
+	"github.com/aisidev/tt/model"
 	"golang.org/x/sys/unix"
 )
 

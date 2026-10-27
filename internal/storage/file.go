@@ -11,7 +11,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/TTstack/tt/internal/runcmd"
+	"github.com/aisidev/tt/internal/runcmd"
 )
 
 type FileStore struct{}

@@ -11,9 +11,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/TTstack/tt/internal/api"
-	"github.com/TTstack/tt/internal/model"
-	"github.com/TTstack/tt/internal/storage"
+	"github.com/aisidev/tt/api"
+	"github.com/aisidev/tt/internal/storage"
+	"github.com/aisidev/tt/model"
 )
 
 func TestPhysicalInventoryFindsUnownedMissingPayloadAndDoesNotTraverseLinks(t *testing.T) {

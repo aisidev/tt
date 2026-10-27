@@ -14,8 +14,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/TTstack/tt/internal/model"
-	"github.com/TTstack/tt/internal/netcfg"
+	"github.com/aisidev/tt/internal/netcfg"
+	"github.com/aisidev/tt/model"
 )
 
 type Firecracker struct {

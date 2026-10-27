@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/TTstack/tt/internal/runcmd"
+	"github.com/aisidev/tt/internal/runcmd"
 )
 
 const CloneSnapshot = "ttsnap"

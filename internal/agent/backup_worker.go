@@ -8,10 +8,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/TTstack/tt/internal/api"
-	"github.com/TTstack/tt/internal/backup"
-	"github.com/TTstack/tt/internal/engine"
-	"github.com/TTstack/tt/internal/model"
+	"github.com/aisidev/tt/api"
+	"github.com/aisidev/tt/internal/backup"
+	"github.com/aisidev/tt/internal/engine"
+	"github.com/aisidev/tt/model"
 )
 
 func prepareDiskRestore(ctx context.Context, vm *model.Vm) error {

@@ -22,7 +22,7 @@ lint:
 	$(GO) vet -p $(GO_PARALLEL) ./...
 
 fmt:
-	gofmt -w cmd internal
+	gofmt -w cmd internal api model
 
 cross:
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GO) build -p $(GO_PARALLEL) ./...

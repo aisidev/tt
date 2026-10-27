@@ -1,6 +1,6 @@
 package api
 
-import "github.com/TTstack/tt/internal/model"
+import "github.com/aisidev/tt/model"
 
 type VolumePage struct {
 	Volumes     model.List[model.Volume] `json:"volumes"`

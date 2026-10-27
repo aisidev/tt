@@ -16,9 +16,9 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/TTstack/tt/internal/commandline"
-	"github.com/TTstack/tt/internal/engine"
-	"github.com/TTstack/tt/internal/model"
+	"github.com/aisidev/tt/internal/commandline"
+	"github.com/aisidev/tt/internal/engine"
+	"github.com/aisidev/tt/model"
 )
 
 //go:embed help.txt

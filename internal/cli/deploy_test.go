@@ -13,7 +13,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/TTstack/tt/internal/runcmd"
+	"github.com/aisidev/tt/internal/runcmd"
 )
 
 func TestParseDiskGiBAndMiB(t *testing.T) {

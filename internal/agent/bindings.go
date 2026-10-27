@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/TTstack/tt/internal/model"
+	"github.com/aisidev/tt/model"
 )
 
 func (d *database) bindNetwork(ctx context.Context, ingress *SshIngress, start, end uint16) error {

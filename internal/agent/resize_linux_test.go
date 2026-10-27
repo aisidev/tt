@@ -9,8 +9,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/TTstack/tt/internal/model"
-	"github.com/TTstack/tt/internal/storage"
+	"github.com/aisidev/tt/internal/storage"
+	"github.com/aisidev/tt/model"
 )
 
 func TestFirecrackerResizeRetryCompletesExt4Growth(t *testing.T) {

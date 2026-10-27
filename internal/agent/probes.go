@@ -11,10 +11,10 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"github.com/TTstack/tt/internal/capability"
-	"github.com/TTstack/tt/internal/engine"
-	"github.com/TTstack/tt/internal/model"
-	"github.com/TTstack/tt/internal/runcmd"
+	"github.com/aisidev/tt/internal/capability"
+	"github.com/aisidev/tt/internal/engine"
+	"github.com/aisidev/tt/internal/runcmd"
+	"github.com/aisidev/tt/model"
 )
 
 type hostProbe struct {

@@ -12,9 +12,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/TTstack/tt/internal/api"
-	"github.com/TTstack/tt/internal/backup"
-	"github.com/TTstack/tt/internal/model"
+	"github.com/aisidev/tt/api"
+	"github.com/aisidev/tt/internal/backup"
+	"github.com/aisidev/tt/model"
 	"github.com/google/uuid"
 )
 

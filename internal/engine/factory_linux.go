@@ -3,7 +3,7 @@ package engine
 import (
 	"fmt"
 
-	"github.com/TTstack/tt/internal/model"
+	"github.com/aisidev/tt/model"
 )
 
 func platformEngine(kind model.Engine, containerRuntime *ContainerRuntime) (Engine, error) {

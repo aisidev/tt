@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"github.com/TTstack/tt/internal/model"
+	"github.com/aisidev/tt/model"
 	"io"
 	"net/http"
 	"os"
@@ -13,7 +13,7 @@ import (
 	"sync"
 	"syscall"
 
-	"github.com/TTstack/tt/internal/api"
+	"github.com/aisidev/tt/api"
 	"github.com/google/uuid"
 )
 

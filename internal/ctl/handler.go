@@ -6,11 +6,11 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/TTstack/tt/internal/api"
-	"github.com/TTstack/tt/internal/auth"
-	"github.com/TTstack/tt/internal/capability"
-	"github.com/TTstack/tt/internal/command"
-	"github.com/TTstack/tt/internal/model"
+	"github.com/aisidev/tt/api"
+	"github.com/aisidev/tt/internal/auth"
+	"github.com/aisidev/tt/internal/capability"
+	"github.com/aisidev/tt/internal/command"
+	"github.com/aisidev/tt/model"
 )
 
 //go:embed web/index.html

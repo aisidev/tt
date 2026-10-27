@@ -11,8 +11,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/TTstack/tt/internal/auth"
-	"github.com/TTstack/tt/internal/runcmd"
+	"github.com/aisidev/tt/internal/auth"
+	"github.com/aisidev/tt/internal/runcmd"
 )
 
 func serveController(ctx context.Context, cfg Config, stderr io.Writer) int {

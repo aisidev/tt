@@ -2,7 +2,7 @@ package engine
 
 import (
 	"context"
-	"github.com/TTstack/tt/internal/netcfg"
+	"github.com/aisidev/tt/internal/netcfg"
 	"os"
 	"os/exec"
 	"path/filepath"

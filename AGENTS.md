@@ -17,7 +17,7 @@ for scopes, ownership, validation and commit rules. Read
 ## Scope and ownership
 
 - `cmd/{tt,tt-ctl,tt-agent,upgrade-agent-v5}`: startup wiring only.
-- `internal/model`, `api`, `capability`, `backup`, `guestconfig`, `sshboot`,
+- `model`, `api`, `capability`, `backup`, `guestconfig`, `sshboot`,
   `auth`, `runcmd`: shared, platform-independent behavior.
 - `internal/engine`, `netcfg`, `storage`: host-side implementations, selected by
   host OS at runtime.

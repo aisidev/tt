@@ -124,7 +124,7 @@ What is given up, and how it is handled:
 | Delivery | Phased (0–7), each phase builds, vets, tests and is committed separately; prerequisite plan corrections are a separate documentation commit |
 | Documentation language | English (this repository), same convention as TTstack |
 | Author metadata | `fh <hui.fan@mail.ru>`, matching TTstack |
-| Module path | `github.com/TTstack/tt` |
+| Module path | `github.com/aisidev/tt` |
 
 ## 5. What "compatible" means precisely
 

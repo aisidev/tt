@@ -14,7 +14,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/TTstack/tt/internal/runcmd"
+	"github.com/aisidev/tt/internal/runcmd"
 )
 
 func writeFixture(t *testing.T, path, content string) {

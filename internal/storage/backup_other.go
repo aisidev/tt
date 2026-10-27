@@ -10,7 +10,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/TTstack/tt/internal/model"
+	"github.com/aisidev/tt/model"
 )
 
 var errBackupUnsupported = errors.New("disk backup is not supported on this platform")

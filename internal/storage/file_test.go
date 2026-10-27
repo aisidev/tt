@@ -10,7 +10,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/TTstack/tt/internal/model"
+	"github.com/aisidev/tt/model"
 )
 
 func writeTestFile(t *testing.T, path string, data []byte) {

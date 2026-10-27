@@ -7,8 +7,8 @@ import (
 	"math"
 	"time"
 
-	"github.com/TTstack/tt/internal/capability"
-	"github.com/TTstack/tt/internal/model"
+	"github.com/aisidev/tt/internal/capability"
+	"github.com/aisidev/tt/model"
 )
 
 func (s *Server) resizeVM(ctx context.Context, id string, target model.VmResources) (*model.Vm, *APIError) {

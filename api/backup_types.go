@@ -1,7 +1,7 @@
 // Wire structures transcribed from the pinned Rust backup.rs.
 package api
 
-import "github.com/TTstack/tt/internal/model"
+import "github.com/aisidev/tt/model"
 
 type BackupView struct {
 	Vm                model.Vm `json:"vm"`

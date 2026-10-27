@@ -7,8 +7,8 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/TTstack/tt/internal/capability"
-	"github.com/TTstack/tt/internal/model"
+	"github.com/aisidev/tt/internal/capability"
+	"github.com/aisidev/tt/model"
 )
 
 const MaxConfigBytes = 64 * 1024

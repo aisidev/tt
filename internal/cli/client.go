@@ -10,9 +10,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/TTstack/tt/internal/api"
-	"github.com/TTstack/tt/internal/auth"
-	"github.com/TTstack/tt/internal/model"
+	"github.com/aisidev/tt/api"
+	"github.com/aisidev/tt/internal/auth"
+	"github.com/aisidev/tt/model"
 )
 
 type Client struct {

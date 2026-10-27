@@ -7,7 +7,7 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/TTstack/tt/internal/model"
+	"github.com/aisidev/tt/model"
 )
 
 func TestSSHIngressDeletesOnlyExactOwnedMapping(t *testing.T) {

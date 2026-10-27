@@ -6,11 +6,11 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/TTstack/tt/internal/api"
-	"github.com/TTstack/tt/internal/capability"
-	"github.com/TTstack/tt/internal/engine"
-	"github.com/TTstack/tt/internal/model"
-	"github.com/TTstack/tt/internal/storage"
+	"github.com/aisidev/tt/api"
+	"github.com/aisidev/tt/internal/capability"
+	"github.com/aisidev/tt/internal/engine"
+	"github.com/aisidev/tt/internal/storage"
+	"github.com/aisidev/tt/model"
 )
 
 type fakeEngine struct {

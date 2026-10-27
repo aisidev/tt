@@ -11,7 +11,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/TTstack/tt/internal/runcmd"
+	"github.com/aisidev/tt/internal/runcmd"
 )
 
 func TestBridgeSetupPlanNeverWritesRealForwarding(t *testing.T) {
