@@ -34,9 +34,9 @@ Startup order (both services):
 
 ```text
 cmd/tt  cmd/tt-ctl  cmd/tt-agent  cmd/upgrade-agent-v5
+model/         public domain and embedded wire types, enums, accounting, codecs
+api/           public wire request/response types and the ApiResp envelope
 internal/
-  model        domain and embedded wire types, enums, constants, accounting, codecs
-  api          wire request/response types and the ApiResp envelope
   capability   design matrix, scoped host report, legacy tag mapping, admission
   backup       backup request validation, replay/preconditions, status mapping
   guestconfig  opaque guest files: validation, SHA-256 digest, ext4 config disk
@@ -57,7 +57,8 @@ internal/
                ttconfig.go
 ```
 
-Rules: `internal/` packages never import `cmd/`. Shared wire types and policy are
+Rules: `internal/` packages never import `cmd/`. Public `api` and `model` packages
+do not import this module's `internal/` packages. Shared wire types and policy are
 platform-independent; `guestconfig`, `sshboot` and `runcmd` also contain host-facing
 helpers separated where necessary. `engine`, `netcfg` and `storage` are host-side and
 select Linux or FreeBSD code by `runtime.GOOS` with per-OS files

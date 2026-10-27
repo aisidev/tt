@@ -315,7 +315,7 @@ arguments). Defaults to preserve:
 | QEMU shutdown grace | 10 s (`system_powerdown`), then SIGTERM/SIGKILL |
 | Firecracker shutdown grace | 30 s after `SendCtrlAltDel`, then SIGTERM/SIGKILL |
 | Backup storage budget | 240 s per attempt, 60 s per command, 16 MiB headroom probe |
-| Port pool | 20000–65535 inclusive, at most 256 entries per VM, port 22 auto-added where the Rust version adds it |
+| Port pool | 20000–65535 inclusive, at most 256 entries per VM; this downstream adds port 22 automatically only for explicitly requested SSH setup |
 
 QEMU's monitor is HMP text over a Unix socket, not QMP JSON. `cont` resumes a
 paused process; agent start of a stopped VM boots the retained disk through the
@@ -325,11 +325,15 @@ command output, not the size of the temporary files Rust uses during execution.
 
 ## 7. Deliberate deviations
 
-These are the only intentional departures. Each must preserve observable behavior
-at the API and filesystem boundary.
+These are the intentional departures. The downstream defaults listed below
+override the pinned defaults; other API and filesystem behavior remains governed
+by this contract.
 
 | Area | Rust | Go | Why |
 |---|---|---|---|
+| Downstream package layout | upstream Go module `github.com/TTstack/tt` keeps API/model packages internal | module `github.com/aisidev/tt` publishes `api` and `model` | retain the downstream's existing secondary-development interface |
+| Default environment lifetime | six hours | zero, meaning permanent unless an explicit lifetime is supplied | retain the downstream's existing persistent-environment default |
+| Automatic SSH forwarding | QEMU, bhyve and Jail add port 22 implicitly | automatic injection requires explicit SSH setup; explicitly requested ports remain honored | retain the downstream's existing opt-in ingress behavior |
 | Optional VM stop grace | fixed per-engine defaults | defaults preserved; `--stop-grace` accepts -1..300 seconds for Linux VMs | explicitly authorized operator control; zero requests immediate force |
 | Downloads (image recipes, deployment helpers) | `curl` | Go HTTP client | fewer host prerequisites; same URLs, digests, atomically published files |
 | Firecracker API calls | `curl --unix-socket` | HTTP client over the Unix socket | same requests, same 5 s timeout |
@@ -424,8 +428,9 @@ The independent review and evidence are recorded in
 ## 10. Durable command envelope (optional extension)
 
 The optional protocols in §10–15 extend the pinned release under explicit
-operator authorization. Legacy HTTP requests, six-hour default lifetime and
-implicit SSH forwarding retain their existing behavior. Database handling follows
+operator authorization. Legacy HTTP requests remain supported. This downstream
+retains its permanent default lifetime and opt-in automatic SSH forwarding as
+specified in §7. Database handling follows
 the pre-v1.0 development policy in §4. Versioning and existing migration code are
 retained; further development changes update the latest schema in place without
 requiring compatibility with previous development databases.

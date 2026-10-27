@@ -106,7 +106,7 @@ after capability withdrawal. Network requests do not hold the fleet database mut
 `POST /api/envs` requires a unique `id` and a nonempty `vms` array. `owner` is an
 optional label (empty by default; the CLI uses `$USER`), not authorization.
 Environment `ssh_keys` are merged with each VM's public keys. `lifetime` is Unix
-seconds from creation: default 21600, zero means no expiry, and longer values are
+seconds from creation: default zero means no expiry, and longer values are
 allowed unless the resulting timestamp overflows. Expiry deletes disks/backups.
 
 | VM field | Default and contract |

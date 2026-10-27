@@ -629,7 +629,7 @@ func TestLifetimeDefaultsLongTermsAndPermanentEnvironments(t *testing.T) {
 		id       string
 		lifetime *uint64
 		expires  uint64
-	}{{"default", nil, 1000 + model.DefaultLifetime}, {"permanent", &permanent, 0}, {"long", &long, 1000 + long}} {
+	}{{"default", nil, 0}, {"permanent", &permanent, 0}, {"long", &long, 1000 + long}} {
 		req := environmentRequest(tc.id)
 		req.Lifetime = tc.lifetime
 		detail, err := s.createEnvironment(ctx, req)

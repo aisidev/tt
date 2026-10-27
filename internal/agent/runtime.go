@@ -555,7 +555,10 @@ func (r *Runtime) CreateVM(ctx context.Context, req api.CreateVmReq) (*model.Vm,
 		}
 	}
 	ports := append([]uint16{}, req.Ports...)
-	if (req.Engine == model.Qemu || req.Engine == model.Bhyve || req.Engine == model.Jail || options.SSH != nil) && !slices.Contains(ports, 22) {
+	// SSH ingress is opt-in: port 22 is forwarded only when the caller
+	// explicitly requested SSH setup. Unrequested guests expose nothing
+	// on the host (defense in depth behind the host firewall).
+	if options.SSH != nil && !slices.Contains(ports, 22) {
 		ports = append(ports, 22)
 	}
 	portMap, err := allocatePorts(vms, ports, r.portStart, r.portEnd, r.portAvailable)

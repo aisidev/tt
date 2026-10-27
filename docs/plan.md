@@ -191,9 +191,9 @@ tt/
 │   ├── tt-ctl/        # controller binary
 │   ├── tt-agent/      # host agent binary
 │   └── upgrade-agent-v5/  # offline v5→v6 database converter
+├── model/             # public entities, enums, constants, validation
+├── api/               # public wire DTOs and the ApiResp envelope
 ├── internal/
-│   ├── model/         # entities, enums, constants, validation
-│   ├── api/           # wire DTOs and the ApiResp envelope
 │   ├── capability/    # design matrix, scoped host report, legacy tag gates
 │   ├── backup/        # backup protocol types and replay/precondition logic
 │   ├── guestconfig/   # opaque guest files, digest, ext4 config disk
