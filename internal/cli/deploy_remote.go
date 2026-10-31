@@ -141,6 +141,20 @@ func (d *deployer) distributed(ctx context.Context, path string) error {
 			return err
 		}
 	}
+	// Authority and its activation sidecars belong to external operator control.
+	// Deployment observes an existing private file, never initializes or replaces it.
+	if controller := cfg.Controller; controller != nil && controller.AuthorityFile != nil {
+		if err := d.checkRemoteAuthority(ctx, sshTarget{controller.SSHUser, controller.Host, controller.SSHPort, d}, *controller.AuthorityFile); err != nil {
+			return err
+		}
+	}
+	for _, agent := range cfg.Agents {
+		if agent.AuthorityFile != nil {
+			if err := d.checkRemoteAuthority(ctx, sshTarget{agent.SSHUser, agent.Host, agent.SSHPort, d}, *agent.AuthorityFile); err != nil {
+				return err
+			}
+		}
+	}
 	environment := "TT_API_KEY=" + key + "\n"
 	if controller := cfg.Controller; controller != nil {
 		d.app.out("\n[deploy] === %s (controller) ===", controller.Host)
@@ -164,6 +178,10 @@ func (d *deployer) distributed(ctx context.Context, path string) error {
 			dataDir = *controller.DataDir
 		}
 		command := fmt.Sprintf("%s/bin/tt-ctl --listen %s --data-dir %s", prefix, controller.Listen, dataDir)
+		if controller.AuthorityFile != nil {
+			command += " --authority-file " + *controller.AuthorityFile
+		}
+
 		// The unprivileged controller must own its explicitly configured state
 		// directory before systemd starts it. Existing contents are not rewritten.
 		var ownedDirs []string
@@ -214,6 +232,9 @@ func (d *deployer) distributed(ctx context.Context, path string) error {
 			return err
 		}
 		command := fmt.Sprintf("%s/bin/tt-agent --listen %s --image-dir %s --runtime-dir %s --data-dir %s/data --storage %s --cpu-total %d --mem-total %d --disk-total %d", prefix, agent.Listen, imageDir, runtimeDir, home, agent.Storage, agent.CPUTotal, agent.MemTotal, disk)
+		if agent.AuthorityFile != nil {
+			command += " --authority-file " + *agent.AuthorityFile
+		}
 		if agent.HostID != nil {
 			command += " --host-id " + *agent.HostID
 		}
@@ -246,4 +267,12 @@ func (d *deployer) distributed(ctx context.Context, path string) error {
 		d.app.out("[deploy] Run with TT_API_KEY set: tt config %s:%s", controller.Host, port)
 	}
 	return nil
+}
+
+func (d *deployer) checkRemoteAuthority(ctx context.Context, target sshTarget, path string) error {
+	// Paths have already passed strict shell/unit validation. readlink/type and
+	// mode checks establish only a selected input, never serving activation.
+	script := "sudo test -f " + path + " && sudo test ! -L " + path + " && sudo sh -c 'mode=$(stat -c %a " + path + "); test \"$mode\" = 600 || test \"$mode\" = 400'"
+	_, err := target.exec(ctx, script)
+	return err
 }

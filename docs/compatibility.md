@@ -350,6 +350,7 @@ by this contract.
 | Deploy diagnostics for missing binaries | `run 'cargo build --release'` | `run 'make release'` in local and distributed deployment, checked per deployed role | Go build instructions; agents-only deployments need no controller binaries |
 | FreeBSD experimental label | bhyve and Jail combinations set `experimental` to true; CLI, help, dashboard and the agent startup warning call FreeBSD experimental | the JSON field remains, and Go emits `false`; platform stays `freebsd`; human text says validated only on FreeBSD 15.x; the startup warning is not printed | native Jail, bhyve file and bhyve zvol ran on FreeBSD 15.1; other FreeBSD releases are not claimed |
 | Custom controller deployment directory | Source-dependent behavior unverified without the pinned checkout | Prepare and assign the configured `controller.data_dir` before starting its service | Native Open Math deployment reproduced permission denial with the inherited home-only setup; default template fixtures remain unchanged |
+| External receiver authority in distributed deployment | No deployment field for the downstream epoch file | Optional `authority_file` per controller/agent passes the existing receiver flag, requires a pre-existing private file outside mutable stores, and never initializes or replaces it | Explicit Open Math deployment must retain recovery fencing rather than silently start an unbound receiver |
 | Remote activation check failure | Pinned template permits a failed `is-active`, OpenRC status or manual process check to be masked by later cleanup | Each check is a standalone command under `set -e`; failure stops success reporting | A failed service is not a completed deployment; SSH/CLI errors retain possible partial effects |
 
 Native phase-4 HTTP observation established that `ruc::Error::to_string()` can
@@ -926,3 +927,16 @@ three explicit status-command deltas documented in §7 when comparing the modern
 Go remote template. No arbitrary diagnostic normalization or fixture rewrite is
 introduced. This corrects reporting only; process-active evidence still does not
 establish application or provider readiness.
+
+## Distributed external-authority selection
+
+Controller and agent tables in `deploy.toml` optionally accept `authority_file`.
+This is an absolute, canonical, shell/unit-safe path to an already provisioned
+private regular file on that receiver. It must be outside the controller database
+or agent database/image/runtime roots and the installation prefix. Deployment
+checks selected inputs before any binary upload or service setup and passes the
+existing `--authority-file` startup flag unchanged. It does not create, upload,
+chown, truncate, migrate or advance that file or its fence/activation sidecars.
+Services remain responsible for strict document validation and activation-chain
+checks; file existence is not serving authority. Absent selection preserves the
+legacy deployment profile and original default template bytes.

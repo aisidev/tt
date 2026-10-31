@@ -56,6 +56,13 @@ images to `/home/ttstack`, units to `/etc/systemd/system`. Existing role keys ar
 reused and persisted in `/opt/ttstack/etc/api-key` (0600). Conflicting role keys
 cause an error; they are never silently replaced. Service environment files are
 0600. Keep administrative keys out of commands, logs and version control.
+For the explicitly bound Open Math profile, controller and agent tables can set
+`authority_file` to a separately provisioned private receiver epoch file outside
+its database/payload directories and deployment prefix. The selected service user
+must already be able to read it and write its separate authority directory for
+original fence/activation sidecars. Deployment checks file selection but never
+creates or replaces the authority or its sidecars; it cannot open recovery gates.
+
 
 The agent unit uses `KillMode=process` so restarting the service does not kill
 its guests, and `TimeoutStopSec=360`. Deployment preserves existing

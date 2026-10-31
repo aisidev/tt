@@ -20,6 +20,7 @@ type deployController struct {
 	Host, SSHUser, Listen string
 	SSHPort               uint16
 	DataDir               *string
+	AuthorityFile         *string
 }
 type deployAgent struct {
 	EnableDiskBackup                                           bool
@@ -27,6 +28,7 @@ type deployAgent struct {
 	SSHPort                                                    uint16
 	ImageDir, RuntimeDir, HostID, ContainerRuntime, ReleaseDir *string
 	CPUTotal, MemTotal                                         uint32
+	AuthorityFile                                              *string
 }
 type deployConfig struct {
 	General    deployGeneral
@@ -118,6 +120,9 @@ func parseDeployConfig(content string) (deployConfig, error) {
 		if controller.DataDir, err = deployOptional(table, "data_dir"); err != nil {
 			return cfg, err
 		}
+		if controller.AuthorityFile, err = deployOptional(table, "authority_file"); err != nil {
+			return cfg, err
+		}
 		cfg.Controller = controller
 	}
 	if value, present := raw["agents"]; present {
@@ -179,7 +184,7 @@ func parseDeployConfig(content string) (deployConfig, error) {
 			for _, field := range []struct {
 				name string
 				out  **string
-			}{{"image_dir", &agent.ImageDir}, {"runtime_dir", &agent.RuntimeDir}, {"host_id", &agent.HostID}, {"container_runtime", &agent.ContainerRuntime}, {"release_dir", &agent.ReleaseDir}} {
+			}{{"image_dir", &agent.ImageDir}, {"runtime_dir", &agent.RuntimeDir}, {"host_id", &agent.HostID}, {"container_runtime", &agent.ContainerRuntime}, {"release_dir", &agent.ReleaseDir}, {"authority_file", &agent.AuthorityFile}} {
 				value, err := deployOptional(table, field.name)
 				if err != nil {
 					return cfg, err
@@ -254,6 +259,18 @@ func validateDeployConfig(cfg deployConfig) error {
 		if err := peer(controller.Host, controller.SSHUser, controller.Listen); err != nil {
 			return err
 		}
+		if controller.AuthorityFile != nil {
+			if err := validateDeployPath(*controller.AuthorityFile, true); err != nil {
+				return err
+			}
+			data := "/home/" + cfg.General.User + "/ctl"
+			if controller.DataDir != nil {
+				data = *controller.DataDir
+			}
+			if deploymentPathWithin(*controller.AuthorityFile, data) || deploymentPathWithin(*controller.AuthorityFile, cfg.General.Prefix) {
+				return fmt.Errorf("controller authority must be outside its database directory")
+			}
+		}
 		if controller.DataDir != nil {
 			if err := validateDeployPath(*controller.DataDir, true); err != nil {
 				return err
@@ -275,6 +292,24 @@ func validateDeployConfig(cfg deployConfig) error {
 				return fmt.Errorf("zvol storage requires dataset names")
 			}
 		}
+		if agent.AuthorityFile != nil {
+			if err := validateDeployPath(*agent.AuthorityFile, true); err != nil {
+				return err
+			}
+			home := "/home/" + cfg.General.User
+			roots := []string{home + "/data", cfg.General.Prefix, home + "/images", home + "/runtime"}
+			if agent.ImageDir != nil {
+				roots = append(roots, *agent.ImageDir)
+			}
+			if agent.RuntimeDir != nil {
+				roots = append(roots, *agent.RuntimeDir)
+			}
+			for _, root := range roots {
+				if deploymentPathWithin(*agent.AuthorityFile, root) {
+					return fmt.Errorf("agent authority must be outside mutable payload and database directories")
+				}
+			}
+		}
 		if agent.HostID != nil {
 			if err := model.ValidateName(*agent.HostID, "host_id"); err != nil {
 				return err
@@ -287,4 +322,8 @@ func validateDeployConfig(cfg deployConfig) error {
 		}
 	}
 	return nil
+}
+
+func deploymentPathWithin(path, root string) bool {
+	return path == root || strings.HasPrefix(path, strings.TrimSuffix(root, "/")+"/")
 }
