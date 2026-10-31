@@ -79,7 +79,10 @@ root logins. The CLI checks paths, users, storage and budgets before remote work
 copies each binary to a private staging directory, and verifies SHA-256 before
 installation. Setup scripts go through SSH stdin. Systemd, OpenRC and the Rust
 manual fallback are retained. A timeout leaves the outcome unknown: inspect the
-services before retrying.
+services before retrying. Custom controller `data_dir` is created and
+owned by the selected controller user before service startup. This changes only
+the directory entry; deployment does not recursively change database ownership
+or rewrite existing state.
 
 The shared key is reused from `deploy.toml.api-key`, imported from an existing
 service, or generated. An explicit `general.api_key` replaces that sidecar; keep

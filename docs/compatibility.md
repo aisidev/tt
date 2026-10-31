@@ -349,6 +349,7 @@ by this contract.
 | Guest-config admission | 32-file/64 KiB limit judged without the managed SSH seed at admission and with it at runtime | the seed-inclusive payload is judged at admission, matching the documented limit text | one Firecracker + SSH shape now fails earlier with a clear 400 instead of a runtime VM failure |
 | Deploy diagnostics for missing binaries | `run 'cargo build --release'` | `run 'make release'` in local and distributed deployment, checked per deployed role | Go build instructions; agents-only deployments need no controller binaries |
 | FreeBSD experimental label | bhyve and Jail combinations set `experimental` to true; CLI, help, dashboard and the agent startup warning call FreeBSD experimental | the JSON field remains, and Go emits `false`; platform stays `freebsd`; human text says validated only on FreeBSD 15.x; the startup warning is not printed | native Jail, bhyve file and bhyve zvol ran on FreeBSD 15.1; other FreeBSD releases are not claimed |
+| Custom controller deployment directory | Source-dependent behavior unverified without the pinned checkout | Prepare and assign the configured `controller.data_dir` before starting its service | Native Open Math deployment reproduced permission denial with the inherited home-only setup; default template fixtures remain unchanged |
 
 Native phase-4 HTTP observation established that `ruc::Error::to_string()` can
 include a timestamp, process ID, ANSI styling and source location inside the
@@ -891,3 +892,20 @@ a real guest across receiver shutdown, restores SQLite from before guest creatio
 bumps the external epoch, proves stale-command refusal separately from physical
 fencing, then confirms pidfd termination, orphan inventory and preserved data.
 Original services are checked by explicit PID-preservation assertions.
+
+## Distributed controller state-directory preparation
+
+The Open Math downstream deployment adapter prepares the exact configured
+`controller.data_dir` before starting its unprivileged controller. A nondefault
+directory is created and its directory entry is assigned to the configured
+service user/group; existing database contents are never recursively rewritten,
+removed or replaced. Default-directory template output remains unchanged.
+
+This is an explicit correction to the Go distributed deployment adapter. The
+committed pinned default-template fixtures remain unchanged. The reference Rust
+checkout is unavailable here, so source-dependent custom-directory parity is
+unverified. The original native deployment passed the custom path to `--data-dir`
+but prepared only `$HOME/ctl`; a controller under a new `/var/lib/...` path failed
+with permission denied. The Open Math isolated systemd fixture retains that
+pre-fix observation. This correction changes directory preparation only, not
+wire/state formats or the meaning of installer completion and provider readiness.

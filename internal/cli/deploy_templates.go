@@ -70,7 +70,7 @@ func openRCInit(name, command string) string {
 
 type envFile struct{ path, content string }
 
-func remoteSetupScript(service, command, user, home, prefix, tmp string, binaries, extraDirs []string, label string, environment *envFile) string {
+func remoteSetupScript(service, command, user, home, prefix, tmp string, binaries, extraDirs []string, label string, environment *envFile, ownedDirs ...string) string {
 	copies := []string{}
 	for _, binary := range binaries {
 		copies = append(copies, fmt.Sprintf("sudo install -m 755 %s/%s %s/bin/.%s.new\nsudo mv -f %s/bin/.%s.new %s/bin/%s", tmp, binary, prefix, binary, prefix, binary, prefix, binary))
@@ -96,7 +96,11 @@ func remoteSetupScript(service, command, user, home, prefix, tmp string, binarie
 		setup = "\n# Write environment file (keeps secrets out of process args)\nsudo mkdir -p $(dirname " + path + ")\nsudo install -m 600 /dev/null " + path + "\nprintf '%s' '" + environment.content + "' | sudo tee " + path + " > /dev/null\nsudo chmod 600 " + path + "\n"
 		source = ". " + path + " && export TT_API_KEY && "
 	}
-	return renderTemplate(remoteTemplate, map[string]string{"user": user, "home": home, "prefix": prefix, "tmp": tmp, "dir_list": strings.Join(directories, " "), "bin_copies": strings.Join(copies, "\n"), "service_name": service, "exec_cmd": command, "systemd_unit": unit, "openrc_initd": init, "host_label": label, "env_file_setup": setup, "env_source": source})
+	ownership := ""
+	if len(ownedDirs) > 0 {
+		ownership = "\nsudo chown " + user + ":" + user + " " + strings.Join(ownedDirs, " ")
+	}
+	return renderTemplate(remoteTemplate, map[string]string{"user": user, "home": home, "prefix": prefix, "tmp": tmp, "extra_ownership": ownership, "dir_list": strings.Join(directories, " "), "bin_copies": strings.Join(copies, "\n"), "service_name": service, "exec_cmd": command, "systemd_unit": unit, "openrc_initd": init, "host_label": label, "env_file_setup": setup, "env_source": source})
 }
 func mountGuardDropin(unit string) *string {
 	requires, checks := []string{}, []string{}

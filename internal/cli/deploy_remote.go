@@ -164,7 +164,13 @@ func (d *deployer) distributed(ctx context.Context, path string) error {
 			dataDir = *controller.DataDir
 		}
 		command := fmt.Sprintf("%s/bin/tt-ctl --listen %s --data-dir %s", prefix, controller.Listen, dataDir)
-		script := remoteSetupScript("tt-ctl", command, user, home, prefix, tmp, []string{"tt-ctl", "tt"}, []string{home + "/ctl"}, controller.Host, &envFile{prefix + "/etc/tt-ctl.env", environment})
+		// The unprivileged controller must own its explicitly configured state
+		// directory before systemd starts it. Existing contents are not rewritten.
+		var ownedDirs []string
+		if dataDir != home+"/ctl" {
+			ownedDirs = []string{dataDir}
+		}
+		script := remoteSetupScript("tt-ctl", command, user, home, prefix, tmp, []string{"tt-ctl", "tt"}, []string{dataDir}, controller.Host, &envFile{prefix + "/etc/tt-ctl.env", environment}, ownedDirs...)
 		result, deployErr := target.exec(ctx, script)
 		_, cleanupErr := target.exec(ctx, "rm -rf -- "+tmp)
 		if deployErr != nil {

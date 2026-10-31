@@ -25,7 +25,7 @@ sudo mkdir -p {prefix}/bin {prefix}/etc {home}/ctl {dir_list}
 {bin_copies}
 
 # Set ownership
-sudo chown {user}:{user} {home} {home}/ctl
+sudo chown {user}:{user} {home} {home}/ctl{extra_ownership}
 {env_file_setup}
 # Detect init system and install service
 if command -v systemctl >/dev/null 2>&1 && [ -d /run/systemd/system ]; then
