@@ -27,7 +27,7 @@ func validAgentAddress(address string) bool {
 func (s *Server) registerHost(ctx context.Context, request api.RegisterHostReq) (*model.Host, int, *APIError) {
 	return s.registerHostExpected(ctx, request, "")
 }
-func (s *Server) registerHostExpected(ctx context.Context, request api.RegisterHostReq, expected string) (*model.Host, int, *APIError) {
+func (s *Server) registerHostExpected(ctx context.Context, request api.RegisterHostReq, expected string, guards ...func() *APIError) (*model.Host, int, *APIError) {
 	if !validAgentAddress(request.Addr) {
 		return nil, 0, apiError(400, "agent address must be host:port")
 	}
@@ -59,6 +59,12 @@ func (s *Server) registerHostExpected(ctx context.Context, request api.RegisterH
 	}
 	s.dbMu.Lock()
 	defer s.dbMu.Unlock()
+	// A cold remote observation cannot authorize a later write after fencing.
+	for _, guard := range guards {
+		if failure := guard(); failure != nil {
+			return nil, 0, failure
+		}
+	}
 	existing, err := s.db.ListHosts(ctx)
 	if err != nil {
 		return nil, 0, internal(err)

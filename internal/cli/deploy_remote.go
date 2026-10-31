@@ -155,6 +155,13 @@ func (d *deployer) distributed(ctx context.Context, path string) error {
 			}
 		}
 	}
+	if controller := cfg.Controller; controller != nil && controller.EnrollmentDirectory != nil {
+		target := sshTarget{controller.SSHUser, controller.Host, controller.SSHPort, d}
+		path := *controller.EnrollmentDirectory
+		if _, err := target.exec(ctx, "sudo test -d "+path+" && sudo test ! -L "+path+" && sudo test -f "+path+"/owner.json && sudo test -f "+path+"/catalog.json"); err != nil {
+			return err
+		}
+	}
 	environment := "TT_API_KEY=" + key + "\n"
 	if controller := cfg.Controller; controller != nil {
 		d.app.out("\n[deploy] === %s (controller) ===", controller.Host)
@@ -182,6 +189,9 @@ func (d *deployer) distributed(ctx context.Context, path string) error {
 			command += " --authority-file " + *controller.AuthorityFile
 		}
 
+		if controller.EnrollmentDirectory != nil {
+			command += " --enrollment-grants " + *controller.EnrollmentDirectory
+		}
 		// The unprivileged controller must own its explicitly configured state
 		// directory before systemd starts it. Existing contents are not rewritten.
 		var ownedDirs []string

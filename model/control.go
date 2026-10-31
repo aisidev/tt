@@ -3,17 +3,18 @@ package model
 // ControlReport negotiates receiver-wide epoch fencing separately from builds.
 // An enabled receiver rejects every command outside its external authority epoch.
 type ControlReport struct {
-	EnrollmentVersion int                     `json:"enrollment_version,omitempty"`
-	ActivationVersion int                     `json:"activation_version,omitempty"`
-	Activations       List[ActivationReceipt] `json:"activations,omitempty"`
-	ScopeDigest       string                  `json:"scope_digest,omitempty"`
-	Engines           List[Engine]            `json:"engines,omitempty"`
-	Fence             *FencingReceipt         `json:"fence,omitempty"`
-	ProtocolVersion   int                     `json:"protocol_version"`
-	Enabled           bool                    `json:"enabled"`
-	Authority         string                  `json:"authority,omitempty"`
-	Epoch             uint64                  `json:"epoch"`
-	Phase             string                  `json:"phase"`
+	EnrollmentTokenVersion int                     `json:"enrollment_token_version,omitempty"`
+	EnrollmentVersion      int                     `json:"enrollment_version,omitempty"`
+	ActivationVersion      int                     `json:"activation_version,omitempty"`
+	Activations            List[ActivationReceipt] `json:"activations,omitempty"`
+	ScopeDigest            string                  `json:"scope_digest,omitempty"`
+	Engines                List[Engine]            `json:"engines,omitempty"`
+	Fence                  *FencingReceipt         `json:"fence,omitempty"`
+	ProtocolVersion        int                     `json:"protocol_version"`
+	Enabled                bool                    `json:"enabled"`
+	Authority              string                  `json:"authority,omitempty"`
+	Epoch                  uint64                  `json:"epoch"`
+	Phase                  string                  `json:"phase"`
 }
 type EnrollmentRequest struct {
 	HostID      string `json:"host_id"`

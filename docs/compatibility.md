@@ -351,6 +351,7 @@ by this contract.
 | FreeBSD experimental label | bhyve and Jail combinations set `experimental` to true; CLI, help, dashboard and the agent startup warning call FreeBSD experimental | the JSON field remains, and Go emits `false`; platform stays `freebsd`; human text says validated only on FreeBSD 15.x; the startup warning is not printed | native Jail, bhyve file and bhyve zvol ran on FreeBSD 15.1; other FreeBSD releases are not claimed |
 | Custom controller deployment directory | Source-dependent behavior unverified without the pinned checkout | Prepare and assign the configured `controller.data_dir` before starting its service | Native Open Math deployment reproduced permission denial with the inherited home-only setup; default template fixtures remain unchanged |
 | External receiver authority in distributed deployment | No deployment field for the downstream epoch file | Optional `authority_file` per controller/agent passes the existing receiver flag, requires a pre-existing private file outside mutable stores, and never initializes or replaces it | Explicit Open Math deployment must retain recovery fencing rather than silently start an unbound receiver |
+| One-time enrollment grants | No token gate in the unbound enrollment profile | An explicitly configured private grant directory requires a host/epoch/scope/plan-bound private header before new membership work | Installation or a public receipt cannot authorize another host or command; original replay remains stable |
 | Remote activation check failure | Pinned template permits a failed `is-active`, OpenRC status or manual process check to be masked by later cleanup | Each check is a standalone command under `set -e`; failure stops success reporting | A failed service is not a completed deployment; SSH/CLI errors retain possible partial effects |
 
 Native phase-4 HTTP observation established that `ruc::Error::to_string()` can
@@ -940,3 +941,58 @@ chown, truncate, migrate or advance that file or its fence/activation sidecars.
 Services remain responsible for strict document validation and activation-chain
 checks; file existence is not serving authority. Absent selection preserves the
 legacy deployment profile and original default template bytes.
+
+## One-time controlled host enrollment
+
+Controllers optionally accept `--enrollment-grants DIRECTORY`, requiring an
+external authority file and a generated private grant directory outside SQLite
+restore and installation scope. Distributed `controller.enrollment_grants`
+forwards that selection after checking the existing directory/documents; it never
+initializes them. Missing, relocated, malformed or incomplete selected stores
+refuse startup/admission rather than becoming an empty permission catalog.
+`GET /api/control` advertises `enrollment_token_version:1` only in this profile.
+The existing activation, complete physical-scope and exact host checks remain.
+
+Local operator commands are `tt-ctl enrollment-token init --parent PRIVATE_PARENT
+--key UUID` and `tt-ctl enrollment-token issue --directory STORE --authority-file
+FILE --request-file PRIVATE_JSON --key UUID`. Initialization generates a fresh
+UUID directory and original issuance replays it; callers cannot recreate a
+configured store by supplying its old identity. The effective principal owns the
+private parent/store and the controller service must own its selected scope.
+Issuance binds authority/epoch, exact original `EnrollmentRequest` and issuance
+UUID. Values are 32 random bytes represented as `ISSUANCE_UUID.HEX`; stdout
+contains only public paths/IDs. Only private `UUID.token` JSON contains `value`.
+
+The private version-1 store contains `owner.json`, `catalog.json`, `store.lock`,
+private token files and per-grant `UUID.claim` records. Owner identity equals the
+generated directory basename. The independent owner count advances and syncs
+before a new catalog grant; missing rows cannot manufacture unused authority.
+The catalog is bounded to 256 grants and 256 KiB, with known quota checked first.
+A claim writes the original enrollment command key into the catalog and then its
+paired claim record before membership effects. Incomplete pairs retain unavailable
+evidence. Another command key cannot reuse a token. The same original key may
+reconcile a lost reply, subject to all current authority/epoch/plan checks.
+
+`X-Fleet-Enrollment-Token` carries the private token only for `POST
+/api/control/enroll`; it is not a model parameter or command argument. The public
+body/receipt remains the original four-field request and contains no secret. The
+SQLite command cache stores body digests and public replies, not the private
+header. An original completed cache replay may return its public receipt without
+new token authority; it cannot execute another enrollment. The original business
+receipt is also committed in the independent claim before acknowledgement, so a
+lost cache publication cannot mint a new receipt UUID. Original token replay
+must still match its authority epoch, receiver scope and plan; database restore
+requires the normal new fenced epoch before mutations resume.
+
+Store creation/issuance is local operator work, never an unauthenticated HTTP
+issuer. No grant opens recovery gates or adopts an agent's untracked VMs/disks.
+Legacy controllers without this explicit selection retain enrollment version 1
+without the token gate. The private formats are outside pinned Rust state parity;
+no tenant API or VM/storage format is changed.
+
+Completed enrollment results are paired with an independent catalog receipt
+digest before acknowledgement. Losing a completed receipt field cannot turn
+that grant into a fresh registration. Missing/incomplete pairs remain unknown.
+The controller rechecks current authority, epoch and active plan under its local
+membership write lock after the final cold identity RPC. An epoch change during
+that RPC cannot publish stale membership, and a consumed grant remains retained.

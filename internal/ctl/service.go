@@ -8,10 +8,12 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 	"time"
 
 	"github.com/aisidev/tt/internal/auth"
+	"github.com/aisidev/tt/internal/command"
 	"github.com/aisidev/tt/internal/runcmd"
 )
 
@@ -49,6 +51,18 @@ func serveController(ctx context.Context, cfg Config, stderr io.Writer) int {
 	if err = state.commandJournal.SetAuthority(cfg.AuthorityFile); err != nil {
 		fmt.Fprintln(stderr, "cannot load receiver authority")
 		return 1
+	}
+	if cfg.EnrollmentDirectory != "" {
+		if cfg.AuthorityFile == "" || deploymentStoreWithin(cfg.EnrollmentDirectory, cfg.DataDir) {
+			fmt.Fprintln(stderr, "enrollment grants require an external authority and independent directory")
+			return 1
+		}
+		store := &command.EnrollmentStore{Directory: cfg.EnrollmentDirectory}
+		if store.Validate() != nil {
+			fmt.Fprintln(stderr, "enrollment grant evidence unavailable")
+			return 1
+		}
+		state.enrollmentStore = store
 	}
 	work, stopWork := context.WithCancel(context.Background())
 	state.workCtx = work
@@ -129,4 +143,8 @@ func serveController(ctx context.Context, cfg Config, stderr io.Writer) int {
 	state.workers.Wait()
 	fmt.Fprintln(stderr, "tt-ctl shutting down")
 	return 0
+}
+
+func deploymentStoreWithin(path, root string) bool {
+	return path == root || strings.HasPrefix(filepath.Clean(path), strings.TrimSuffix(filepath.Clean(root), "/")+"/")
 }

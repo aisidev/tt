@@ -22,6 +22,9 @@ func (s *Server) controlReportHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	if report.Enabled {
 		report.EnrollmentVersion = 1
+		if s.enrollmentStore != nil {
+			report.EnrollmentTokenVersion = 1
+		}
 	}
 	reply(w, report, nil, 200)
 }
@@ -53,6 +56,25 @@ func (s *Server) enrollControlHTTP(w http.ResponseWriter, r *http.Request) {
 	if activation == nil || activation.Request.PlanDigest != request.PlanDigest {
 		reply(w, model.Unit{}, diskAPIError("state", "recovery_plan_conflict", "receiver enrollment differs from activated plan"), 200)
 		return
+	}
+	// The private header is never reflected into a cached public receipt.
+	token := r.Header.Get("X-Fleet-Enrollment-Token")
+	if s.enrollmentStore != nil {
+		if err := s.enrollmentStore.Check(token, envelope, request); err != nil {
+			reply(w, model.Unit{}, internal(err), 200)
+			return
+		}
+	}
+	if s.enrollmentStore != nil {
+		original, err := s.enrollmentStore.Receipt(token, envelope, request)
+		if err != nil {
+			reply(w, model.Unit{}, internal(err), 200)
+			return
+		}
+		if original != nil {
+			reply(w, *original, nil, 200)
+			return
+		}
 	}
 	ctx, cancel := context.WithTimeout(r.Context(), 45*time.Second)
 	defer cancel()
@@ -87,9 +109,42 @@ func (s *Server) enrollControlHTTP(w http.ResponseWriter, r *http.Request) {
 		reply(w, model.Unit{}, diskAPIError("state", "activation_unconfirmed", "receiver has no matching activation evidence"), 200)
 		return
 	}
-	if _, _, apiErr := s.registerHostExpected(ctx, api.RegisterHostReq{Addr: parsed.Host}, request.HostID); apiErr != nil {
+	if s.enrollmentStore != nil {
+		if err := s.enrollmentStore.Claim(token, envelope, request); err != nil {
+			reply(w, model.Unit{}, internal(err), 200)
+			return
+		}
+	}
+	guard := func() *APIError {
+		current, err := a.State()
+		if err != nil {
+			return internal(err)
+		}
+		if current.ID != envelope.Authority || current.Epoch != envelope.Epoch {
+			return diskAPIError("state", "stale_epoch", "enrollment authority changed before membership write")
+		}
+		if err = a.RequireActive("mutations"); err != nil {
+			return internal(err)
+		}
+		activation, err := a.Activation("mutations")
+		if err != nil {
+			return internal(err)
+		}
+		if activation == nil || activation.Request.PlanDigest != request.PlanDigest {
+			return diskAPIError("state", "recovery_plan_conflict", "enrollment plan changed before membership write")
+		}
+		return nil
+	}
+	if _, _, apiErr := s.registerHostExpected(ctx, api.RegisterHostReq{Addr: parsed.Host}, request.HostID, guard); apiErr != nil {
 		reply(w, model.Unit{}, apiErr, 200)
 		return
 	}
-	reply(w, model.EnrollmentReceipt{Version: 1, ID: uuid.NewString(), Authority: envelope.Authority, Epoch: envelope.Epoch, Key: envelope.Key, Request: request}, nil, 200)
+	receipt := model.EnrollmentReceipt{Version: 1, ID: uuid.NewString(), Authority: envelope.Authority, Epoch: envelope.Epoch, Key: envelope.Key, Request: request}
+	if s.enrollmentStore != nil {
+		if err := s.enrollmentStore.Complete(token, envelope, request, receipt); err != nil {
+			reply(w, model.Unit{}, internal(err), 200)
+			return
+		}
+	}
+	reply(w, receipt, nil, 200)
 }

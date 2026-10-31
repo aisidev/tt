@@ -215,3 +215,18 @@ use the same configuration and verify `tt status`, host identity and inventory.
 Do not run the converter against v6, do not delete retained runtime files to
 recover from a schema error, and do not downgrade an upgraded database to an
 older agent. Preserve backups and inspect incomplete operations before rollback.
+
+## One-time controlled enrollment
+
+For a token-bound controller, provision a private service-owned parent outside
+its database and use `tt-ctl enrollment-token init --parent PATH --key UUID` as
+that service principal. Configure the returned generated directory through
+`controller.enrollment_grants` or `--enrollment-grants`; deployment does not create
+or replace it. After the reviewed receiver plan is known, issue a grant with
+`tt-ctl enrollment-token issue --directory STORE --authority-file FILE
+--request-file PRIVATE_JSON --key UUID`. The output names the private token file;
+keep its `value` out of arguments, logs and model paths. The API client supplies
+it through `X-Fleet-Enrollment-Token`, with the original command identity and
+reviewed request. Fencing, physical inventory, activation and exact host checks
+are still required before membership changes. See compatibility for original
+replay and unavailable-evidence behavior.

@@ -21,6 +21,7 @@ type deployController struct {
 	SSHPort               uint16
 	DataDir               *string
 	AuthorityFile         *string
+	EnrollmentDirectory   *string
 }
 type deployAgent struct {
 	EnableDiskBackup                                           bool
@@ -121,6 +122,9 @@ func parseDeployConfig(content string) (deployConfig, error) {
 			return cfg, err
 		}
 		if controller.AuthorityFile, err = deployOptional(table, "authority_file"); err != nil {
+			return cfg, err
+		}
+		if controller.EnrollmentDirectory, err = deployOptional(table, "enrollment_grants"); err != nil {
 			return cfg, err
 		}
 		cfg.Controller = controller
@@ -258,6 +262,21 @@ func validateDeployConfig(cfg deployConfig) error {
 	if controller := cfg.Controller; controller != nil {
 		if err := peer(controller.Host, controller.SSHUser, controller.Listen); err != nil {
 			return err
+		}
+		if controller.EnrollmentDirectory != nil {
+			if controller.AuthorityFile == nil {
+				return fmt.Errorf("enrollment grants require receiver authority")
+			}
+			if err := validateDeployPath(*controller.EnrollmentDirectory, true); err != nil {
+				return err
+			}
+			data := "/home/" + cfg.General.User + "/ctl"
+			if controller.DataDir != nil {
+				data = *controller.DataDir
+			}
+			if deploymentPathWithin(*controller.EnrollmentDirectory, data) || deploymentPathWithin(*controller.EnrollmentDirectory, cfg.General.Prefix) {
+				return fmt.Errorf("enrollment grants must be outside restored and installation directories")
+			}
 		}
 		if controller.AuthorityFile != nil {
 			if err := validateDeployPath(*controller.AuthorityFile, true); err != nil {

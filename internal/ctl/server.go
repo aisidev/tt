@@ -34,18 +34,19 @@ func internal(err error) *APIError {
 }
 
 type Server struct {
-	commandJournal *command.Journal
-	db             *DB
-	dbMu           sync.Mutex
-	operationsMu   sync.Mutex
-	operations     map[string]bool
-	revision       atomic.Uint64
-	apiKey         *string
-	stderr         io.Writer
-	workCtx        context.Context
-	workers        sync.WaitGroup
-	now            func() uint64
-	clientFactory  func(time.Duration) (*agentClient, error)
+	enrollmentStore *command.EnrollmentStore
+	commandJournal  *command.Journal
+	db              *DB
+	dbMu            sync.Mutex
+	operationsMu    sync.Mutex
+	operations      map[string]bool
+	revision        atomic.Uint64
+	apiKey          *string
+	stderr          io.Writer
+	workCtx         context.Context
+	workers         sync.WaitGroup
+	now             func() uint64
+	clientFactory   func(time.Duration) (*agentClient, error)
 }
 
 func newServer(db *DB, key *string) *Server {

@@ -18,17 +18,22 @@ import (
 var help string
 
 type Config struct {
-	AuthorityFile string
-	Listen        string
-	DataDir       string
-	APIKey        string
-	keyPresent    bool
+	EnrollmentDirectory string
+	AuthorityFile       string
+	Listen              string
+	DataDir             string
+	APIKey              string
+	keyPresent          bool
 }
 
 func Run(args []string, stdout, stderr io.Writer) int {
+	if len(args) > 0 && args[0] == "enrollment-token" {
+		return enrollmentTokenCLI(args[1:], stdout, stderr)
+	}
 	var cfg Config
 	fs := flag.NewFlagSet("tt-ctl", flag.ContinueOnError)
 	fs.StringVar(&cfg.Listen, "listen", "0.0.0.0:9200", "Listen address for the HTTP API")
+	fs.StringVar(&cfg.EnrollmentDirectory, "enrollment-grants", "", "Private generated enrollment grant directory outside database restore scope")
 	fs.StringVar(&cfg.AuthorityFile, "authority-file", "", "Private deployment authority file outside database restore scope")
 	fs.StringVar(&cfg.DataDir, "data-dir", "/home/ttstack/ctl", "Directory for persistent state")
 	fs.StringVar(&cfg.APIKey, "api-key", os.Getenv("TT_API_KEY"), "API key for authentication")

@@ -8,3 +8,9 @@ Options:
       --api-key <API_KEY>    API key for authentication. If set, all API requests must include `Authorization: Bearer <key>`. Can also be provided via TT_API_KEY env var [env: TT_API_KEY=]
   -h, --help                 Print help
   -V, --version              Print version
+
+Downstream controlled enrollment:
+  --enrollment-grants DIRECTORY  Require a generated private enrollment grant store
+  tt-ctl enrollment-token init --parent PRIVATE_DIRECTORY --key UUID
+  tt-ctl enrollment-token issue --directory DIRECTORY --authority-file FILE --request-file FILE --key UUID
+Token values remain in private files; these commands print public paths only.
