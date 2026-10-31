@@ -12,6 +12,7 @@ import (
 	"github.com/aisidev/tt/api"
 	"github.com/aisidev/tt/internal/capability"
 	"github.com/aisidev/tt/internal/engine"
+	"github.com/aisidev/tt/internal/guestconfig"
 	"github.com/aisidev/tt/internal/sshboot"
 	"github.com/aisidev/tt/model"
 	"golang.org/x/sys/unix"
@@ -73,6 +74,9 @@ func (r *Runtime) StopVM(ctx context.Context, id string, options ...model.StopOp
 	return r.recount(ctx)
 }
 func (r *Runtime) StartVM(ctx context.Context, id string) error {
+	return r.startVM(ctx, id, nil)
+}
+func (r *Runtime) startVM(ctx context.Context, id string, files model.GuestConfig) error {
 	vm, err := r.requireVM(ctx, id)
 	if err != nil {
 		return err
@@ -83,7 +87,24 @@ func (r *Runtime) StartVM(ctx context.Context, id string) error {
 	if vm.PendingResources != nil {
 		return fmt.Errorf("resource update unfinished; retry the recorded resources before starting")
 	}
+	if files != nil {
+		if capability.Require(r.capabilityReport(), model.Firecracker, r.storage, capability.GuestConfig) != nil {
+			return diskError("terminal", "incompatible_protocol", "host does not support guest configuration")
+		}
+		if len(files) == 0 {
+			return diskError("terminal", "invalid_request", "guest configuration cannot be empty")
+		}
+		if err := guestconfig.Validate(vm.Engine, files, vm.Options.IsolatedNetwork); err != nil {
+			return diskError("terminal", "invalid_request", "invalid guest configuration")
+		}
+		if vm.Engine != model.Firecracker || vm.Options.GuestConfigDigest == nil && vm.Options.SSH == nil {
+			return diskError("terminal", "incompatible_protocol", "reseed requires an established Firecracker configuration drive")
+		}
+	}
 	if vm.State == model.VmRunning {
+		if files != nil && (vm.Options.GuestConfigDigest == nil || *vm.Options.GuestConfigDigest != *guestconfig.Digest(files)) {
+			return diskError("state", "state_conflict", "running guest configuration cannot be replaced")
+		}
 		return nil
 	}
 	if vm.State != model.VmStopped && vm.State != model.VmPaused {
@@ -97,6 +118,49 @@ func (r *Runtime) StartVM(ctx context.Context, id string) error {
 	}
 	if vm.State == model.VmStopped && !r.resource.CanFit(vm.CPU, vm.Engine.MemoryReservation(vm.Mem), 0) {
 		return fmt.Errorf("insufficient resources to restart VM")
+	}
+	if files != nil {
+		// INV-03/04/14: the command journal already owns this exact input. Prove
+		// physical stop before replacing any bootstrap bytes; paused is insufficient.
+		if vm.State != model.VmStopped {
+			return diskError("state", "state_conflict", "guest configuration requires physical stop")
+		}
+		eng, err := r.engineFactory(vm.Engine, r.containerRuntime)
+		if err != nil {
+			return err
+		}
+		state, err := eng.State(ctx, vm)
+		if err != nil {
+			return err
+		}
+		if state != model.VmStopped {
+			return diskError("state", "state_conflict", "guest configuration requires physical stop")
+		}
+		config := model.GuestConfig{}
+		for name, value := range files {
+			config[name] = value
+		}
+		if _, present := config[sshboot.SeedFile]; present {
+			return diskError("denied", "capability_denied", "managed SSH seed is reserved")
+		}
+		if vm.Options.SSH != nil {
+			data, err := readOriginalSSHSeed(filepath.Join(r.runDir, "ssh-"+vm.ID+".sh"))
+			if err != nil {
+				return diskError("unknown", "recovery_evidence_unavailable", "original SSH seed is unavailable")
+			}
+			config[sshboot.SeedFile] = string(data)
+		}
+		directory, err := r.store.FirecrackerDir(ctx, r.clonePath(vm))
+		if err != nil {
+			return err
+		}
+		if err = guestconfig.WriteDisk(ctx, directory, config); err != nil {
+			return diskError("unknown", "persistence_unavailable", "guest configuration publication is uncertain")
+		}
+		vm.Options.GuestConfigDigest = guestconfig.Digest(files)
+		if err = saveVM(ctx, r.db.conn, vm); err != nil {
+			return err
+		}
 	}
 	previous := vm.State
 	vm.State = model.VmCreating

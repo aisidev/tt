@@ -51,5 +51,13 @@ func writeDisk(ctx context.Context, directory string, files model.GuestConfig) e
 	if err := disk.Sync(); err != nil {
 		return fmt.Errorf("sync config disk: %w", err)
 	}
-	return os.Rename(disk.Name(), destination)
+	if err := os.Rename(disk.Name(), destination); err != nil {
+		return err
+	}
+	parent, err := os.Open(directory)
+	if err != nil {
+		return err
+	}
+	defer parent.Close()
+	return parent.Sync()
 }

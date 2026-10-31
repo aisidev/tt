@@ -996,3 +996,45 @@ that grant into a fresh registration. Missing/incomplete pairs remain unknown.
 The controller rechecks current authority, epoch and active plan under its local
 membership write lock after the final cold identity RPC. An epoch change during
 that RPC cannot publish stale membership, and a consumed grant remains retained.
+
+## 17. Optional private guest configuration start
+
+The Open Math OS secondary-development task explicitly authorizes this optional
+integration extension beyond pinned Rust parity. Existing create and empty-body
+start interfaces keep their contracts. No CLI, frontend or application authority
+is added. This is host bootstrap delivery, not guest/application readiness.
+
+Controller and agent expose authenticated `GET /api/guest-config-capabilities`,
+returning a normal success envelope with `protocol_version:1` and
+`start_with_config`. The controller declares forwarding support; the agent requires
+Linux and its probed Firecracker guest-configuration capability. Unknown/missing
+protocol support cannot be treated as legacy success.
+
+The new controller `POST /api/envs/ID/start-with-config` and agent
+`POST /api/vms/ID/start-with-config` take `{version:1,files:{NAME:CONTENTS}}`.
+They require a durable `X-Compute-Command` identity and a nonempty bounded map under
+the existing guest configuration contract. The controller permits exactly one VM
+and negotiates the selected host before recording lifecycle dispatch. It forwards
+the original command with the normal VM-specific child key. Control responses
+have a 4096-byte envelope; excess or malformed replies remain unknown.
+
+The host requires an existing Firecracker configuration drive reservation and
+confirmed physical stop, not a database-only stopped marker or paused VM. Caller
+input cannot replace the managed SSH seed. If SSH is selected, the original
+private regular single-link bounded seed is preserved. The full configuration
+replaces the former caller file set; all data remains opaque to scheduling and
+is never returned in the response. After synced atomic disk publication, the
+caller-file digest is persisted before the normal engine launch. The jailer
+restages that new disk on launch. Identical input on an already running VM is a
+known replay; different input is refused. The existing command receipt also binds
+the complete private request hash. Secret bytes do not enter command arguments,
+public VM records, receipts or logs.
+
+The host lifecycle mutation boundary now preserves admitted command metadata
+while using service lifetime for cancellation. After acquiring the mutation lock,
+it rechecks current deployment authority and subject watermark before lifecycle
+effects (INV-03/04/15). A stale queued request cannot overwrite a newer seed or
+start a fenced VM. Passive reads and legacy calls without durable metadata retain
+their earlier behavior. A failed formatter retains the former disk and stopped
+VM; uncertainty does not become application readiness or permission to release
+storage/operation claims. No guest root/runtime bundle is synthesized here.

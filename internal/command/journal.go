@@ -244,3 +244,26 @@ func (s *Journal) Wrap(next http.Handler, supports func(*http.Request) bool, res
 func WithContext(ctx context.Context, envelope Envelope) context.Context {
 	return context.WithValue(ctx, contextKey{}, envelope)
 }
+
+// CheckCurrentLocked revalidates admitted authority after waiting for the host
+// mutation lock. The caller must hold Journal.Mu through its effect (INV-04).
+func (s *Journal) CheckCurrentLocked(ctx context.Context) error {
+	envelope, ok := FromContext(ctx)
+	if !ok {
+		return &api.BoundaryError{Class: "denied", Code: "missing_identity", Message: "durable command identity is required"}
+	}
+	if err := s.validateAuthority(envelope, false); err != nil {
+		return err
+	}
+	var token uint64
+	if err := s.Conn.QueryRowContext(ctx, "SELECT token FROM command_fences WHERE subject=?1", envelope.Subject).Scan(&token); err != nil {
+		return &api.BoundaryError{Class: "unknown", Code: "persistence_unavailable", Message: "command watermark is unavailable"}
+	}
+	if envelope.Token < token {
+		return &api.BoundaryError{Class: "state", Code: "stale_fence", Message: "command ownership changed before dispatch"}
+	}
+	if envelope.Token != token {
+		return &api.BoundaryError{Class: "unknown", Code: "identity_mismatch", Message: "command watermark does not match admission"}
+	}
+	return nil
+}

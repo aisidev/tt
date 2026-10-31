@@ -461,6 +461,9 @@ func findHost(hosts []model.Host, id string) *model.Host {
 	return nil
 }
 func (s *Server) changeEnvironment(ctx context.Context, id, action string, options ...model.StopOptions) *APIError {
+	return s.changeEnvironmentConfigured(ctx, id, action, nil, options...)
+}
+func (s *Server) changeEnvironmentConfigured(ctx context.Context, id, action string, files model.GuestConfig, options ...model.StopOptions) *APIError {
 	operation, apiErr := s.beginOperation(id)
 	if apiErr != nil {
 		return apiErr
@@ -488,6 +491,22 @@ func (s *Server) changeEnvironment(ctx context.Context, id, action string, optio
 	client, err := s.clientFactory(360 * time.Second)
 	if err != nil {
 		return internal(err)
+	}
+	if files != nil {
+		if action != "start" || len(detail.VMs) != 1 {
+			return internal(&api.BoundaryError{Class: "terminal", Code: "invalid_request", Message: "configuration start requires one VM"})
+		}
+		vm := detail.VMs[0]
+		if err := guestconfig.Validate(vm.Engine, files, vm.Options.IsolatedNetwork); err != nil {
+			return internal(&api.BoundaryError{Class: "terminal", Code: "invalid_request", Message: "invalid guest configuration"})
+		}
+		host := findHost(hosts, vm.HostID)
+		if host == nil {
+			return internal(&api.BoundaryError{Class: "state", Code: "unavailable", Message: "guest host unavailable"})
+		}
+		if err := client.checkGuestConfig(ctx, *host); err != nil {
+			return internal(err)
+		}
 	}
 	if action == "start" {
 		for _, vm := range detail.VMs {
@@ -519,7 +538,11 @@ func (s *Server) changeEnvironment(ctx context.Context, id, action string, optio
 		if host == nil {
 			err = fmt.Errorf("host %s is missing", vm.HostID)
 		} else {
-			err = client.action(ctx, *host, vm.ID, &action, options...)
+			if files != nil {
+				err = client.startWithConfig(ctx, *host, vm.ID, files)
+			} else {
+				err = client.action(ctx, *host, vm.ID, &action, options...)
+			}
 		}
 		if err == nil {
 			confirmed := vm
@@ -528,6 +551,9 @@ func (s *Server) changeEnvironment(ctx context.Context, id, action string, optio
 				confirmed.State = model.VmRunning
 			}
 			confirmed.Error = nil
+			if files != nil {
+				confirmed.Options.GuestConfigDigest = guestconfig.Digest(files)
+			}
 			if _, err := withDB(s, func(db *DB) (model.Unit, error) { return model.Unit{}, db.PutVM(ctx, &confirmed) }); err != nil {
 				return internal(err)
 			}

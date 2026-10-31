@@ -148,3 +148,11 @@ replacing a shared firewall. For tests, use a dedicated VNET with bhyve/child-ja
 permissions and a matching devfs ruleset; [native tooling](../tools/native/README.md)
 records the verified setup. Fixed bridges, firewall names and run paths require
 network **and** filesystem isolation when running multiple agents on one host.
+
+The optional private configuration restart protocol in
+[compatibility §17](compatibility.md#17-optional-private-guest-configuration-start)
+can replace the caller file set before a physically stopped Firecracker VM starts.
+It requires a preexisting configuration-drive reservation, current durable command
+identity and independently negotiated agent support. It preserves the original
+managed SSH seed. The protocol does not execute file contents or prove the image
+contains a consumer for them; prepared runtime/image assembly remains separate.

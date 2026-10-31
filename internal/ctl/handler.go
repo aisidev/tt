@@ -32,6 +32,8 @@ func (s *Server) Handler() http.Handler {
 		{Pattern: "/api/envs", Methods: []string{"GET", "POST"}, Handler: s.envsHTTP},
 		{Pattern: "/api/envs/{id}", Methods: []string{"GET", "DELETE"}, Handler: s.envHTTP},
 		{Pattern: "/api/envs/{id}/stop", Methods: []string{"POST"}, Handler: func(w http.ResponseWriter, r *http.Request) { s.changeHTTP(w, r, "stop") }},
+		{Pattern: "/api/envs/{id}/start-with-config", Methods: []string{"POST"}, Handler: s.startWithConfigHTTP},
+		{Pattern: "/api/guest-config-capabilities", Methods: []string{"GET"}, Handler: s.guestConfigCapabilitiesHTTP},
 		{Pattern: "/api/envs/{id}/start", Methods: []string{"POST"}, Handler: func(w http.ResponseWriter, r *http.Request) { s.changeHTTP(w, r, "start") }},
 		{Pattern: "/api/vms/{id}", Methods: []string{"GET"}, Handler: s.vmHTTP},
 		{Pattern: "/api/vms/{id}/resources", Methods: []string{"POST"}, Handler: s.resizeHTTP},

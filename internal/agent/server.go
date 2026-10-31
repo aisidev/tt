@@ -64,6 +64,8 @@ func (s *Server) Handler(key *string) http.Handler {
 		{Pattern: "/api/vms", Methods: []string{"GET", "POST"}, Handler: s.vms},
 		{Pattern: "/api/vms/{id}", Methods: []string{"GET", "DELETE"}, Handler: s.vm},
 		{Pattern: "/api/vms/{id}/stop", Methods: []string{"POST"}, Handler: s.stopVM},
+		{Pattern: "/api/vms/{id}/start-with-config", Methods: []string{"POST"}, Handler: s.startWithConfigHTTP},
+		{Pattern: "/api/guest-config-capabilities", Methods: []string{"GET"}, Handler: s.guestConfigCapabilitiesHTTP},
 		{Pattern: "/api/vms/{id}/start", Methods: []string{"POST"}, Handler: s.startVM},
 		{Pattern: "/api/vms/{id}/resources", Methods: []string{"POST"}, Handler: s.resizeVM},
 		{Pattern: "/api/vms/{id}/backup", Methods: []string{"GET", "PUT", "DELETE"}, Handler: s.backupVM},
@@ -88,10 +90,22 @@ func (s *Server) Handler(key *string) http.Handler {
 // Request cancellation never supplies the mutation's context. net/http keeps
 // this handler alive after a disconnect; service shutdown drains active handlers
 // before releasing the runtime state lock.
-func mutate[T any](s *Server, f func(context.Context, *Runtime) (T, error)) (T, error) {
+func mutate[T any](s *Server, f func(context.Context, *Runtime) (T, error), source ...context.Context) (T, error) {
+	ctx := s.workCtx
+	if len(source) > 0 {
+		ctx = command.CopyContext(ctx, source[0])
+	}
 	s.mutation.Lock()
 	defer s.mutation.Unlock()
-	return f(s.workCtx, s.runtime)
+	if _, ok := command.FromContext(ctx); ok {
+		if err := s.commandJournal.CheckCurrentLocked(ctx); err != nil {
+			var empty T
+			return empty, err
+		}
+	}
+	// Preserve the admitted identity after queue waits; only service lifetime
+	// supplies cancellation for an already-dispatched mutation (INV-03/04/15).
+	return f(ctx, s.runtime)
 }
 func failure(w http.ResponseWriter, err error) {
 	var typed *api.BoundaryError
@@ -173,7 +187,7 @@ func (s *Server) vms(w http.ResponseWriter, request *http.Request) {
 	}
 	vm, err := mutate(s, func(ctx context.Context, r *Runtime) (*model.Vm, error) {
 		return r.CreateVM(command.CopyContext(ctx, request.Context()), body)
-	})
+	}, request.Context())
 	if err != nil {
 		if strings.Contains(err.Error(), "capability ") {
 			api.WriteJSON(w, 400, api.Failure[model.Unit](err.Error()))
@@ -189,7 +203,7 @@ func (s *Server) vm(w http.ResponseWriter, request *http.Request) {
 	if request.Method == "DELETE" {
 		_, err := mutate(s, func(ctx context.Context, r *Runtime) (model.Unit, error) {
 			return model.Unit{}, r.DestroyVM(command.CopyContext(ctx, request.Context()), id)
-		})
+		}, request.Context())
 		actionReply(w, err)
 		return
 	}
@@ -223,13 +237,13 @@ func (s *Server) stopVM(w http.ResponseWriter, request *http.Request) {
 	}
 	_, err := mutate(s, func(ctx context.Context, r *Runtime) (model.Unit, error) {
 		return model.Unit{}, r.StopVM(ctx, request.PathValue("id"), options)
-	})
+	}, request.Context())
 	actionReply(w, err)
 }
 func (s *Server) startVM(w http.ResponseWriter, request *http.Request) {
 	_, err := mutate(s, func(ctx context.Context, r *Runtime) (model.Unit, error) {
 		return model.Unit{}, r.StartVM(ctx, request.PathValue("id"))
-	})
+	}, request.Context())
 	actionReply(w, err)
 }
 func (s *Server) resizeVM(w http.ResponseWriter, request *http.Request) {
@@ -239,7 +253,7 @@ func (s *Server) resizeVM(w http.ResponseWriter, request *http.Request) {
 	}
 	vm, err := mutate(s, func(ctx context.Context, r *Runtime) (*model.Vm, error) {
 		return r.ResizeVM(ctx, request.PathValue("id"), target)
-	})
+	}, request.Context())
 	if err == nil {
 		api.WriteJSON(w, 200, api.Success(*vm))
 		return
