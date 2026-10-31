@@ -45,7 +45,8 @@ UNIT
     sudo systemctl enable {service_name}
     sudo systemctl restart {service_name}
     sleep 1
-    sudo systemctl is-active {service_name} && echo "[deploy] {service_name} is active"
+    sudo systemctl is-active {service_name}
+    echo "[deploy] {service_name} is active"
 elif command -v rc-service >/dev/null 2>&1; then
     echo "[deploy] using OpenRC"
     sudo tee /etc/init.d/{service_name} > /dev/null <<'INITD'
@@ -55,14 +56,16 @@ INITD
     sudo rc-update add {service_name} default 2>/dev/null || true
     sudo rc-service {service_name} restart 2>/dev/null || sudo rc-service {service_name} start
     sleep 1
-    sudo rc-service {service_name} status && echo "[deploy] {service_name} is running"
+    sudo rc-service {service_name} status
+    echo "[deploy] {service_name} is running"
 else
     echo "[deploy] WARNING: no known init system; starting {service_name} manually"
     sudo pkill -x '{service_name}' 2>/dev/null || true
     sleep 1
     sudo nohup sh -c '{env_source}{exec_cmd}' > /var/log/{service_name}.log 2>&1 &
     sleep 2
-    pgrep -x '{service_name}' && echo "[deploy] {service_name} started (manual)"
+    pgrep -x '{service_name}'
+    echo "[deploy] {service_name} started (manual)"
 fi
 
 # Cleanup

@@ -62,7 +62,9 @@ its guests, and `TimeoutStopSec=360`. Deployment preserves existing
 `RequiresMountsFor` and mountpoint `ExecStartPre` guards in
 `tt-agent.service.d/90-ttstack-mounts.conf`. Put operator overrides in drop-ins.
 A restart reconciles retained inventory; it does not automatically boot stopped
-guests. `stop` retains disks but loses guest memory, and `delete` destroys disks.
+guests. A failed post-start service check returns a failed deployment, retaining
+possible partial installation for inspection. It cannot be hidden by staging
+cleanup or a final success message. `stop` retains disks but loses guest memory, and `delete` destroys disks.
 
 ## Distributed Linux deployment
 

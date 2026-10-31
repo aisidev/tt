@@ -104,7 +104,13 @@ func TestDeploymentTemplatesMatchPinnedRust(t *testing.T) {
 		if got := openRCInit(tc.Service, command); got != tc.Openrc {
 			t.Fatal("OpenRC template drift")
 		}
-		if got := remoteSetupScript(tc.Service, command, "fixture", "/home/fixture", "/opt/tt", "/tmp/ttstack-deploy.fixture", []string{tc.Service}, []string{"/srv/images"}, "testhost", env); got != tc.Remote {
+		// Compatibility §7 deliberately propagates unsuccessful activation checks.
+		// Keep the original oracle bytes; apply only that documented output delta.
+		expectedRemote := tc.Remote
+		for _, check := range []string{"sudo systemctl is-active " + tc.Service, "sudo rc-service " + tc.Service + " status", "pgrep -x '" + tc.Service + "'"} {
+			expectedRemote = strings.Replace(expectedRemote, check+" && echo", check+"\n    echo", 1)
+		}
+		if got := remoteSetupScript(tc.Service, command, "fixture", "/home/fixture", "/opt/tt", "/tmp/ttstack-deploy.fixture", []string{tc.Service}, []string{"/srv/images"}, "testhost", env); got != expectedRemote {
 			t.Fatal("remote template drift")
 		}
 	}
